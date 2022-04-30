@@ -10,6 +10,7 @@ import {
 } from "react-router-dom";
 import SignUp from "./publicsite/SignUp/SignUp";
 import UserHome from "./authsite/UserHome/UserHome";
+import SignIn from "./publicsite/SignIn/SignIn";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -20,6 +21,7 @@ root.render(
           <Routes>
               <Route path="/" element={<App />} />
                <Route path={"/register"} element={<SignUp />} />
+               <Route path={"/login"} element={<SignIn />} />
                <Route path={"/home"} element={<UserHome />} />
                  {/* <Route path="teams" element={<Teams />}>
                       <Route path=":teamId" element={<Team />} />

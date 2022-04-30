@@ -11,7 +11,12 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import {Auth} from "@firebase/auth";
+import {app} from "../../authentication/firebase";
+import {useNavigate} from "react-router-dom";
 
 function Copyright(props: any) {
     return (
@@ -29,6 +34,8 @@ function Copyright(props: any) {
 const theme = createTheme();
 
 export default function SignIn() {
+    let navigate = useNavigate();
+
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -36,6 +43,26 @@ export default function SignIn() {
             email: data.get('email'),
             password: data.get('password'),
         });
+
+
+
+
+        const auth: Auth = getAuth(app );
+
+        signInWithEmailAndPassword(auth, data.get('email')+'', data.get('password')+'')
+            .then((userCredential) => {
+                // Signed in
+                const user = userCredential.user;
+                navigate(`/home`);
+
+                localStorage.setItem('user', JSON.stringify(userCredential.user))
+                // ...
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+            });
+
     };
 
     return (

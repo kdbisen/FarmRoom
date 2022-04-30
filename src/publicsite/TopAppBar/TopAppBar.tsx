@@ -15,7 +15,7 @@ export default function TopAppBar() {
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                         FarmRoom
                     </Typography>
-                    <Button color="inherit">Login</Button>
+                    <Button color="inherit"><Link to={"/login"}>Login</Link></Button>
                     <Button color="inherit"><Link to={"/register"} >Create Account</Link></Button>
 
                 </Toolbar>
