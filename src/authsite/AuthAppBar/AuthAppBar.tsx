@@ -11,6 +11,9 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
+import {app} from "../../authentication/firebase";
+import { getAuth, signOut } from "firebase/auth";
+import {useNavigate} from "react-router-dom";
 
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -18,6 +21,7 @@ const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 const AuthAppBar = () => {
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+    let navigate = useNavigate();
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
@@ -30,7 +34,17 @@ const AuthAppBar = () => {
         setAnchorElNav(null);
     };
 
-    const handleCloseUserMenu = () => {
+    const handleCloseUserMenu = (action: string) => {
+        if(action === 'Logout') {
+            const auth = getAuth(app);
+            signOut(auth).then(() => {
+                // Sign-out successful.
+                navigate("/")
+            }).catch((error) => {
+                // An error happened.
+            });
+        }
+
         setAnchorElUser(null);
     };
 
@@ -126,7 +140,7 @@ const AuthAppBar = () => {
                             onClose={handleCloseUserMenu}
                         >
                             {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                                <MenuItem key={setting} onClick={ () => handleCloseUserMenu(setting)}>
                                     <Typography textAlign="center">{setting}</Typography>
                                 </MenuItem>
                             ))}
