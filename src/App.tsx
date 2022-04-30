@@ -1,25 +1,38 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import './App.scss';
+import { Button, createTheme, ThemeProvider } from '@mui/material';
+import styles from './style.module.scss';
+
 
 function App() {
+
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: styles.colorPrimary
+      },
+      secondary: {
+        main: styles.colorSecondary
+      },
+      error: {
+        main: styles.colorDanger
+      }
+    }
+  });
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <div className="App">
+        <ThemeProvider theme={theme}>
+          <Button variant="contained">primary</Button>
+          <Button color="secondary" variant="contained">
+            secondary
+          </Button>
+          <Button color="error" variant="contained">
+            danger
+          </Button>
+        </ThemeProvider>
+      </div>
   );
 }
 

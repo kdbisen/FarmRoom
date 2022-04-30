@@ -1,0 +1,6 @@
+@import './legacy.scss';
+:export {
+  colorPrimary : $color-primary;
+  colorSecondary : $color-secondary;
+  colorDanger : $color-danger
+}
