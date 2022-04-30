@@ -2,6 +2,7 @@ import React from 'react';
 import './App.scss';
 import { Button, createTheme, ThemeProvider } from '@mui/material';
 import styles from './style.module.scss';
+import TopAppBar from "./publicsite/TopAppBar/TopAppBar";
 
 
 function App() {
@@ -24,13 +25,7 @@ function App() {
   return (
       <div className="App">
         <ThemeProvider theme={theme}>
-          <Button variant="contained">primary</Button>
-          <Button color="secondary" variant="contained">
-            secondary
-          </Button>
-          <Button color="error" variant="contained">
-            danger
-          </Button>
+          <TopAppBar />
         </ThemeProvider>
       </div>
   );
