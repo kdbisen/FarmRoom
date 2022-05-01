@@ -11,12 +11,23 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import FacebookIcon from '@mui/icons-material/Facebook';
+import GoogleIcon from '@mui/icons-material/Google';
+import {
+    FacebookAuthProvider,
+    getAuth,
+    GoogleAuthProvider,
+    signInWithEmailAndPassword,
+    signInWithPopup
+} from "firebase/auth";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {Auth} from "@firebase/auth";
 import {app} from "../../authentication/firebase";
 import {useNavigate} from "react-router-dom";
+
+/*import {getAuth, GoogleAuthProvider,FacebookAuthProvider, signInWithPopup} from "firebase/auth";
+import {Auth} from "@firebase/auth";
+import {app} from "../../authentication/firebase";*/
 
 function Copyright(props: any) {
     return (
@@ -64,6 +75,71 @@ export default function SignIn() {
             });
 
     };
+
+    function siginUsing()  {
+        const provider = new GoogleAuthProvider();
+        const auth: Auth = getAuth();
+        signInWithPopup(auth, provider)
+            .then((result) => {
+                // This gives you a Google Access Token. You can use it to access the Google API.
+                const credential = GoogleAuthProvider.credentialFromResult(result);
+                console.log(credential);
+                const token = credential ?credential.accessToken : "";
+                // The signed-in user info.
+                const user = result.user;
+                console.log(token);
+                console.log(user);
+
+
+                navigate(`/home`);
+
+                localStorage.setItem('user', JSON.stringify(user))
+                // ...
+            }).catch((error) => {
+            // Handle Errors here.
+            console.log(error);
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // The email of the user's account used.
+            const email = error.email;
+            // The AuthCredential type that was used.
+            const credential = GoogleAuthProvider.credentialFromError(error);
+            // ...
+        });
+    }
+    function siginUsingFb()  {
+
+        const provider = new FacebookAuthProvider();
+        const auth: Auth = getAuth();
+        signInWithPopup(auth, provider)
+            .then((result) => {
+                console.log(result)
+                // The signed-in user info.
+                const user = result.user;
+
+                navigate(`/home`);
+
+                localStorage.setItem('user', JSON.stringify(user))
+
+                // // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+                // const credential = FacebookAuthProvider.credentialFromResult(result);
+                // const accessToken = credential.accessToken;
+
+                // ...
+            })
+            .catch((error) => {
+                // Handle Errors here.
+                console.log(error)
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                // The email of the user's account used.
+                const email = error.email;
+                // The AuthCredential type that was used.
+                //const credential = FacebookAuthProvider.credentialFromError(error);
+
+                // ...
+            });
+    }
 
     return (
         <ThemeProvider theme={theme}>
@@ -123,12 +199,25 @@ export default function SignIn() {
                                 </Link>
                             </Grid>
                             <Grid item>
-                                <Link href="#" variant="body2">
+                                <Link href="/register" variant="body2">
                                     {"Don't have an account? Sign Up"}
                                 </Link>
                             </Grid>
                         </Grid>
+
+                        <Grid container>
+                            <Grid item xs>
+                                <h4>Or Login with</h4>
+                            </Grid>
+                            <Grid item xs>
+                                <Button color="info" variant="contained" onClick={siginUsing}><FacebookIcon />Google </Button>
+                            </Grid>
+                            <Grid item>
+                                <Button color="error"  variant="contained"onClick={siginUsingFb}><GoogleIcon />Facebook </Button>
+                            </Grid>
+                        </Grid>
                     </Box>
+
                 </Box>
                 <Copyright sx={{ mt: 8, mb: 4 }} />
             </Container>
