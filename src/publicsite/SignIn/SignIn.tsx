@@ -18,16 +18,15 @@ import {
     getAuth,
     GoogleAuthProvider,
     signInWithEmailAndPassword,
-    signInWithPopup
+    signInWithPopup,
+    signInWithPhoneNumber,
+    RecaptchaVerifier
 } from "firebase/auth";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {Auth} from "@firebase/auth";
 import {app} from "../../authentication/firebase";
 import {useNavigate} from "react-router-dom";
-
-/*import {getAuth, GoogleAuthProvider,FacebookAuthProvider, signInWithPopup} from "firebase/auth";
-import {Auth} from "@firebase/auth";
-import {app} from "../../authentication/firebase";*/
+import {useState} from "react";
 
 function Copyright(props: any) {
     return (
@@ -46,6 +45,53 @@ const theme = createTheme();
 
 export default function SignIn() {
     let navigate = useNavigate();
+    const auth = getAuth();
+    const[sentOtp, setSendOtp] = useState<any>()
+    const[mobile, setMobile] = useState<any>()
+    const[code, setCode] = useState<any>()
+
+    // This function runs when the 'sign-in-button' is clicked
+    // Takes the value from the 'phoneNumber' input and sends SMS to that phone number
+    function submitPhoneNumberAuth() {
+        window.recaptchaVerifier = new RecaptchaVerifier('sign-in-button', {
+            'size': 'invisible',
+            'callback': (response: any) => {
+                console.log(response)
+                setSendOtp(true)
+                // reCAPTCHA solved, allow signInWithPhoneNumber.
+                //onSignInSubmit();
+            }
+        }, auth);
+
+        var appVerifier = window.recaptchaVerifier;
+         signInWithPhoneNumber(auth, mobile, appVerifier)
+            .then(function(confirmationResult) {
+                window.confirmationResult = confirmationResult;
+                console.log(confirmationResult);
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+    }
+
+    // This function runs when the 'confirm-code' button is clicked
+    // Takes the value from the 'code' input and submits the code to verify the phone number
+    // Return a user object if the authentication was successful, and auth is complete
+    function submitPhoneNumberAuthCode() {
+        window.confirmationResult.confirm(code).then((result: any) => {
+            // User signed in successfully.
+            console.log(result)
+            const user = result.user;
+            navigate(`/home`);
+            localStorage.setItem('user', JSON.stringify(user))
+            // ...
+        }).catch((error: any) => {
+            console.log(error)
+            // User couldn't sign in (bad verification code?)
+            // ...
+        });
+    }
+
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -54,18 +100,12 @@ export default function SignIn() {
             email: data.get('email'),
             password: data.get('password'),
         });
-
-
-
-
         const auth: Auth = getAuth(app );
-
         signInWithEmailAndPassword(auth, data.get('email')+'', data.get('password')+'')
             .then((userCredential) => {
                 // Signed in
                 const user = userCredential.user;
                 navigate(`/home`);
-
                 localStorage.setItem('user', JSON.stringify(userCredential.user))
                 // ...
             })
@@ -73,7 +113,6 @@ export default function SignIn() {
                 const errorCode = error.code;
                 const errorMessage = error.message;
             });
-
     };
 
     function siginUsing()  {
@@ -89,10 +128,7 @@ export default function SignIn() {
                 const user = result.user;
                 console.log(token);
                 console.log(user);
-
-
                 navigate(`/home`);
-
                 localStorage.setItem('user', JSON.stringify(user))
                 // ...
             }).catch((error) => {
@@ -116,11 +152,8 @@ export default function SignIn() {
                 console.log(result)
                 // The signed-in user info.
                 const user = result.user;
-
                 navigate(`/home`);
-
                 localStorage.setItem('user', JSON.stringify(user))
-
                 // // This gives you a Facebook Access Token. You can use it to access the Facebook API.
                 // const credential = FacebookAuthProvider.credentialFromResult(result);
                 // const accessToken = credential.accessToken;
@@ -157,8 +190,49 @@ export default function SignIn() {
                         <LockOutlinedIcon />
                     </Avatar>
                     <Typography component="h1" variant="h5">
-                        Sign in
+                        Sign in with Mobile number
                     </Typography>
+
+                    <Box>
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="mobile"
+                            label="mobile "
+                            name="mobile"
+                            autoComplete="mobile"
+                            autoFocus
+                            disabled={sentOtp}
+                            onChange={event => {setMobile(event.currentTarget.value)}}
+                        />
+
+                        {sentOtp && <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="code"
+                            label="code "
+                            name="code"
+                            autoComplete="code"
+                            autoFocus
+                            onChange={event => {setCode(event.currentTarget.value)}}
+                        /> }
+
+                        <Button id="sign-in-button"   disabled={sentOtp}    variant="outlined" onClick={submitPhoneNumberAuth}>
+                            SIGN IN WITH PHONE
+                        </Button>
+                        {sentOtp && <Button id="confirm-code"      variant="outlined" onClick={submitPhoneNumberAuthCode}>
+                            ENTER CODE
+                        </Button>
+                        }
+                        <div id="recaptcha-container"></div>
+                    </Box>
+
+                    <Typography component="h1" variant="h5">
+                        Or Sign in with email
+                    </Typography>
+
                     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
                         <TextField
                             margin="normal"
@@ -205,19 +279,25 @@ export default function SignIn() {
                             </Grid>
                         </Grid>
 
-                        <Grid container>
-                            <Grid item xs>
-                                <h4>Or Login with</h4>
-                            </Grid>
-                            <Grid item xs>
-                                <Button color="info" variant="contained" onClick={siginUsing}><FacebookIcon />Google </Button>
-                            </Grid>
-                            <Grid item>
-                                <Button color="error"  variant="contained"onClick={siginUsingFb}><GoogleIcon />Facebook </Button>
-                            </Grid>
-                        </Grid>
                     </Box>
 
+                    <Typography component="h1" variant="h5">
+                        Or Sign in with
+                    </Typography>
+                        <Box>
+                            <Grid container>
+
+                                <Grid item  >
+                                    <Button color="info" variant="contained" onClick={siginUsing}><FacebookIcon />Google </Button>
+                                </Grid>
+                                <Grid item xs>
+
+                                </Grid>
+                                <Grid item>
+                                    <Button color="error"  variant="contained"onClick={siginUsingFb}><GoogleIcon />Facebook </Button>
+                                </Grid>
+                            </Grid>
+                        </Box>
                 </Box>
                 <Copyright sx={{ mt: 8, mb: 4 }} />
             </Container>

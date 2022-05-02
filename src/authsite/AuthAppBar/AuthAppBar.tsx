@@ -44,7 +44,6 @@ const AuthAppBar = () => {
                 // An error happened.
             });
         }
-
         setAnchorElUser(null);
     };
 

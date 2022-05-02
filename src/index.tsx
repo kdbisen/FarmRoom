@@ -15,6 +15,14 @@ import SignIn from "./publicsite/SignIn/SignIn";
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
+declare global {
+    interface Window {
+        recaptchaVerifier: any;
+        confirmationResult: any;
+    }
+}
+
 root.render(
   <React.StrictMode>
       <BrowserRouter>
