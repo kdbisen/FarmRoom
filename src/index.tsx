@@ -1,20 +1,26 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
 import './index.scss';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import {
-    BrowserRouter,
-    Routes,
-    Route,
-} from "react-router-dom";
-import SignUp from "./publicsite/SignUp/SignUp";
-import UserHome from "./authsite/UserHome/UserHome";
-import SignIn from "./publicsite/SignIn/SignIn";
+import { createRoot } from 'react-dom/client';
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
+import {
+    ApolloClient,
+    InMemoryCache,
+    ApolloProvider,
+    useQuery,
+    gql
+} from "@apollo/client";
+
+
+const client = new ApolloClient({
+    uri: 'https://48p1r2roz4.sse.codesandbox.io',
+    cache: new InMemoryCache()
+});
+
+
+const container = document.getElementById('root')!;
+const root = createRoot(container);
 
 declare global {
     interface Window {
@@ -25,20 +31,8 @@ declare global {
 
 root.render(
   <React.StrictMode>
-      <BrowserRouter>
-          <Routes>
-              <Route path="/" element={<App />} />
-               <Route path={"/register"} element={<SignUp />} />
-               <Route path={"/login"} element={<SignIn />} />
-               <Route path={"/home"} element={<UserHome />} />
-                 {/* <Route path="teams" element={<Teams />}>
-                      <Route path=":teamId" element={<Team />} />
-                      <Route path="new" element={<NewTeamForm />} />
-                      <Route index element={<LeagueStandings />} />
-                  </Route>*/}
 
-          </Routes>
-      </BrowserRouter>
+          <App />
   </React.StrictMode>
 );
 

@@ -1,8 +1,12 @@
 import React from 'react';
 import './App.scss';
-import { Button, createTheme, ThemeProvider } from '@mui/material';
+import {createTheme, ThemeProvider } from '@mui/material';
 import styles from './style.module.scss';
 import TopAppBar from "./publicsite/TopAppBar/TopAppBar";
+import {BrowserRouter, Route, Routes} from "react-router-dom";
+import SignUp from "./publicsite/SignUp/SignUp";
+import SignIn from "./publicsite/SignIn/SignIn";
+import UserHome from "./authsite/UserHome/UserHome";
 
 
 function App() {
@@ -25,7 +29,14 @@ function App() {
   return (
       <div className="App">
         <ThemeProvider theme={theme}>
-          <TopAppBar />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<TopAppBar />} />
+              <Route path={"/register"} element={<SignUp />} />
+              <Route path={"/login"} element={<SignIn />} />
+              <Route path={"/home"} element={<UserHome />} />
+            </Routes>
+          </BrowserRouter>
         </ThemeProvider>
       </div>
   );

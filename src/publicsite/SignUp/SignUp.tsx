@@ -16,7 +16,6 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {  app} from "../../authentication/firebase";
 import {createUserWithEmailAndPassword, getAuth} from "firebase/auth";
 import {Auth} from "@firebase/auth";
-import firebase from "firebase/compat";
 import { useNavigate } from "react-router-dom";
 
 
